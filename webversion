@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Features Questionnaire</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .question-container, .result-container, .contact-container {
+            margin: 20px 0;
+        }
+        .question-container button, .contact-container input[type="submit"] {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .question-container button:hover, .contact-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        .dmform-wrapper {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: #fff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Business Features Questionnaire</h1>
+
+    <div id="question-container" class="question-container">
+        <p id="question">Are you primarily concerned with improving efficiency in your operations?</p>
+        <button onclick="recordAnswer('efficiency')">Yes</button>
+        <button onclick="nextQuestion()">No</button>
+    </div>
+
+    <div id="result-container" class="result-container hidden">
+        <h2>Recommended Features</h2>
+        <ul id="features-list"></ul>
+        <div class="contact-container dmform-wrapper">
+            <h3>Contact Us</h3>
+            <form method="post" id="contact-form">
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div>
+                    <label for="message">What specific features are you interested in?</label>
+                    <input type="text" name="message" id="message" required>
+                </div>
+                <div>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+            <div class="dmform-success hidden">
+                <p>Thank you for contacting us. We will get back to you as soon as possible.</p>
+            </div>
+            <div class="dmform-error hidden">
+                <p>Oops, there was an error sending your message. Please try again later.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define the dictionary of features mapped to motivations and concerns
+        const motivationsAndConcerns = {
+            "efficiency": [
+                "Automated workflows", "Task prioritization automation", "Process optimization",
+                "Operational bottleneck identification", "Automated scheduling", "Employee task assignment optimization"
+            ],
+            "growth": [
+                "Lead generation automation", "Personalized customer experiences", "Sales funnel optimization",
+                "Marketing content automation", "Customer segmentation", "Market expansion strategies"
+            ],
+            "cost_savings": [
+                "Expense tracking automation", "Operational cost analysis", "Inventory management automation",
+                "Supplier cost optimization", "Payroll automation", "Financial forecasting", "Optimized staffing levels"
+            ],
+            "security": [
+                "Data encryption", "Fraud detection", "Compliance tracking", "Access control management", 
+                "Threat monitoring and alerts", "Risk assessment automation"
+            ],
+            "scalability": [
+                "Cloud infrastructure management", "Automated scalability based on traffic", "Load balancing",
+                "Data backup and recovery automation", "Scalable customer support tools", "Multi-location support"
+            ],
+            "complexity": [
+                "Simplified project management", "Employee onboarding automation", "Integrated software platforms", 
+                "User-friendly dashboards", "Automated reporting", "Centralized data management"
+            ]
+        };
+
+        // Questions list with motivations
+        const questions = [
+            { text: "Are you primarily concerned with improving efficiency in your operations?", category: "efficiency" },
+            { text: "Is growth a primary driver for your business this year?", category: "growth" },
+            { text: "Are cost savings and optimizing your budget a concern for you?", category: "cost_savings" },
+            { text: "How concerned are you about the security of your business data and processes?", category: "security" },
+            { text: "Is your company planning to scale, or do you need to accommodate more users/customers?", category: "scalability" },
+            { text: "Are you looking to reduce the complexity of your operations or employee management?", category: "complexity" }
+        ];
+
+        // Variables to keep track of progress
+        let currentQuestionIndex = 0;
+        let selectedMotivations = [];
+
+        // Functions to handle the questionnaire flow
+        function recordAnswer(category) {
+            selectedMotivations.push(category);
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById("question").innerText = questions[currentQuestionIndex].text;
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            // Generate the recommended features based on selected motivations
+            const recommendedFeatures = selectedMotivations
+                .flatMap(motivation => motivationsAndConcerns[motivation])
+                .filter((item, index, self) => self.indexOf(item) === index); // Remove duplicates
+
+            // Display the results
+            const featuresList = document.getElementById("features-list");
+            featuresList.innerHTML = "";
+            recommendedFeatures.forEach(feature => {
+                const listItem = document.createElement("li");
+                listItem.textContent = feature;
+                featuresList.appendChild(listItem);
+            });
+
+            // Populate the contact form message
+            const messageField = document.getElementById("message");
+            messageField.value = recommendedFeatures.join(", ");
+
+            // Hide the questions and show the results
+            document.getElementById("question-container").classList.add("hidden");
+            document.getElementById("result-container").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
